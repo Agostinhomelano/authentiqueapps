@@ -1,0 +1,23 @@
+{% extends 'serviteurs/base.html' %} {% block title %}Enregistrement réussi{%
+endblock %} {% block content %}
+<div class="success-shell">
+  <div class="success-card">
+    <div class="success-icon">✓</div>
+    <h1>Enregistrement effectué avec succès</h1>
+    <p>
+      Les informations de {{ serviteur.nom_complet }} ont bien été enregistrées.
+    </p>
+
+    <div class="success-actions">
+      <a
+        href="{% url 'serviteurs:detail' serviteur.pk %}"
+        class="btn btn-primary"
+        >Consulter la fiche</a
+      >
+      <a href="{% url 'serviteurs:lister' %}" class="btn btn-secondary"
+        >Retour à l'accueil</a
+      >
+    </div>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,72 @@
+{% extends 'serviteurs/base.html' %} {% block title %}Serviteurs enregistrés
+{% endblock %} {% block content %}
+<section class="page-header">
+  <div>
+    <h1>Serviteurs enregistrés</h1>
+    <p>Consultez, recherchez et gérez les fiches de service.</p>
+  </div>
+  <div class="header-actions">
+    <a class="btn btn-primary" href="{% url 'serviteurs:nouveau' %}"
+      >+ Nouveau serviteur</a
+    >
+    <a class="btn btn-secondary" href="{% url 'serviteurs:export_csv' %}"
+      >Exporter CSV</a
+    >
+    <a class="btn btn-secondary" href="{% url 'serviteurs:export_excel' %}"
+      >Exporter Excel</a
+    >
+  </div>
+</section>
+
+<form class="search-box" method="get">
+  <input
+    type="search"
+    name="q"
+    value="{{ query }}"
+    placeholder="Rechercher par nom, téléphone ou ministère"
+    aria-label="Rechercher"
+  />
+  <button type="submit" class="btn btn-primary">Rechercher</button>
+</form>
+
+<div class="grid cards">
+  {% for serviteur in serviteurs %}
+  <article class="card">
+    {% if serviteur.photo %}
+    <img
+      src="{{ serviteur.photo.url }}"
+      alt="{{ serviteur.nom_complet }}"
+      class="thumb"
+    />
+    {% else %}
+    <div class="thumb placeholder">Photo</div>
+    {% endif %}
+    <div class="card-body">
+      <h3>{{ serviteur.nom_complet }}</h3>
+      <p><strong>Téléphone :</strong> {{ serviteur.telephone }}</p>
+      <p>
+        <strong>Ministère :</strong> {{ serviteur.ministere|default:'Non
+        renseigné' }}
+      </p>
+      <p>
+        <strong>Champ apostolique :</strong> {{
+        serviteur.champ_apostolique|default:'Non renseigné' }}
+      </p>
+      <p>
+        <strong>Disponibilité :</strong> {{ serviteur.get_disponibilite_display
+        }}
+      </p>
+      <div class="card-links">
+        <a href="{% url 'serviteurs:detail' serviteur.pk %}">Voir</a>
+        <a href="{% url 'serviteurs:modifier' serviteur.pk %}">Modifier</a>
+        <a href="{% url 'serviteurs:supprimer' serviteur.pk %}">Supprimer</a>
+      </div>
+    </div>
+  </article>
+  {% empty %}
+  <div class="empty-state">
+    <p>Aucun serviteur ne correspond à votre recherche pour le moment.</p>
+  </div>
+  {% endfor %}
+</div>
+{% endblock %}

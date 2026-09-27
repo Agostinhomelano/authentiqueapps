@@ -1,0 +1,25 @@
+{% extends 'serviteurs/base.html' %} {% block title %}Confirmation de
+suppression{% endblock %} {% block content %}
+<section class="page-header">
+  <div>
+    <h1>Supprimer un serviteur</h1>
+    <p>Cette action est définitive.</p>
+  </div>
+</section>
+
+<div class="confirm-box">
+  <p>
+    Voulez-vous vraiment supprimer
+    <strong>{{ serviteur.nom_complet }}</strong> ?
+  </p>
+  <form method="post">
+    {% csrf_token %}
+    <button type="submit" class="btn btn-danger">Oui, supprimer</button>
+    <a
+      href="{% url 'serviteurs:detail' serviteur.pk %}"
+      class="btn btn-secondary"
+      >Annuler</a
+    >
+  </form>
+</div>
+{% endblock %}

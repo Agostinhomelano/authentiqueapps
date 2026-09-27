@@ -1,0 +1,138 @@
+{% extends 'serviteurs/base.html' %} {% block title %}{{ serviteur.nom_complet
+}}{% endblock %} {% block content %}
+<section class="page-header detail-header">
+  <div>
+    <h1>{{ serviteur.nom_complet }}</h1>
+    <p>Fiche détaillée du serviteur.</p>
+  </div>
+  <div class="header-actions">
+    <a
+      class="btn btn-secondary"
+      href="{% url 'serviteurs:modifier' serviteur.pk %}"
+      >Modifier</a
+    >
+    <a
+      class="btn btn-secondary"
+      href="{% url 'serviteurs:supprimer' serviteur.pk %}"
+      >Supprimer</a
+    >
+    <button class="btn btn-primary" onclick="window.print()">Imprimer</button>
+  </div>
+</section>
+
+<div class="detail-grid">
+  <div class="info-card">
+    <h2>Informations de l'église</h2>
+    <p><strong>Église :</strong> {{ serviteur.eglise_nom }}</p>
+    <p>
+      <strong>Région Apostolique :</strong> {{
+      serviteur.region_apostolique|default:'-' }}
+    </p>
+    <p>
+      <strong>District Apostolique :</strong> {{
+      serviteur.district_apostolique|default:'-' }}
+    </p>
+    <p>
+      <strong>District d'Ancien :</strong> {{
+      serviteur.district_ancien|default:'-' }}
+    </p>
+  </div>
+
+  <div class="info-card">
+    <h2>Identité</h2>
+    <p><strong>Nom complet :</strong> {{ serviteur.nom_complet }}</p>
+    <p>
+      <strong>Lieu et date de naissance :</strong> {{
+      serviteur.lieu_naissance|default:'-' }} {% if serviteur.date_naissance
+      %}{{ serviteur.date_naissance }}{% endif %}
+    </p>
+    <p>
+      <strong>État civil :</strong> {{
+      serviteur.get_etat_civil_display|default:'-' }}
+    </p>
+    <p><strong>Téléphone :</strong> {{ serviteur.telephone }}</p>
+    <p><strong>E-mail :</strong> {{ serviteur.email|default:'-' }}</p>
+    {% if serviteur.photo %}
+    <img
+      src="{{ serviteur.photo.url }}"
+      alt="Photo du serviteur"
+      class="detail-photo"
+    />
+    {% endif %}
+  </div>
+
+  <div class="info-card">
+    <h2>Ministère</h2>
+    <p>
+      <strong>Date de baptême d'eau :</strong> {{
+      serviteur.baptise_eau_date|default:'-' }}
+    </p>
+    <p>
+      <strong>Personne ayant effectué le baptême :</strong> {{
+      serviteur.baptise_eau_par|default:'-' }}
+    </p>
+    <p>
+      <strong>Date de Saint Scellé :</strong> {{
+      serviteur.saint_sceau_date|default:'-' }}
+    </p>
+    <p>
+      <strong>Personne ayant effectué le Saint Scellé :</strong> {{
+      serviteur.saint_sceau_par|default:'-' }}
+    </p>
+    <p>
+      <strong>Communauté d'origine :</strong> {{
+      serviteur.communaute_origine|default:'-' }}
+    </p>
+    <p>
+      <strong>Date d'ordination actuelle :</strong> {{
+      serviteur.date_ordination|default:'-' }}
+    </p>
+    <p><strong>Ministère :</strong> {{ serviteur.ministere|default:'-' }}</p>
+    <p>
+      <strong>Personne ayant effectué l'ordination :</strong> {{
+      serviteur.ordination_par|default:'-' }}
+    </p>
+    <p>
+      <strong>Champ apostolique :</strong> {{
+      serviteur.champ_apostolique|default:'-' }}
+    </p>
+  </div>
+
+  <div class="info-card">
+    <h2>Curriculum ministériel</h2>
+    {% if curriculum %}
+    <ol>
+      {% for item in curriculum %}
+      <li>
+        <strong>{{ item.ordre }}.</strong>
+        {{ item.libelle }} {% if item.annee %}({{ item.annee }}){% endif %} {%
+        if item.details %}<br />{{ item.details }}{% endif %}
+      </li>
+      {% endfor %}
+    </ol>
+    {% else %}
+    <p>Aucun parcours ministériel enregistré.</p>
+    {% endif %}
+  </div>
+
+  <div class="info-card">
+    <h2>Études faites</h2>
+    <p><strong>Niveau :</strong> {{ serviteur.niveau_etudes|default:'-' }}</p>
+    <p><strong>Domaine :</strong> {{ serviteur.domaine_etudes|default:'-' }}</p>
+  </div>
+
+  <div class="info-card">
+    <h2>Autres</h2>
+    <p>
+      <strong>Disponibilité à l'œuvre :</strong> {{
+      serviteur.get_disponibilite_display }}
+    </p>
+    <p>
+      <strong>Lieu de remplissage :</strong> {{
+      serviteur.lieu_remplissage|default:'-' }}
+    </p>
+    <p><strong>Date :</strong> {{ serviteur.date_remplissage|default:'-' }}</p>
+    <p><strong>Signature :</strong> {{ serviteur.signature|default:'-' }}</p>
+  </div>
+</div>
+{% endblock %}

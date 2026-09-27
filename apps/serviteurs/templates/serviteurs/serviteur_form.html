@@ -1,0 +1,217 @@
+{% extends 'serviteurs/base.html' %} 
+{% load static %} 
+{% block title %}
+{{ title}}
+{% endblock %} 
+{% block content %}
+<div class="wizard-shell">
+  <div class="wizard-header">
+    <div class="logo-box">LOGO</div>
+    <div class="brand-name">ÉGLISE NOUVEL APOSTOLAT AUTHENTIQUE</div>
+  </div>
+
+  <div class="wizard-title">Identification du Serviteur de Dieu</div>
+
+  <div class="wizard-progress" aria-label="Progression">
+    <span class="progress-step active"></span>
+    <span class="progress-step"></span>
+    <span class="progress-step"></span>
+    <span class="progress-step"></span>
+    <span class="progress-step"></span>
+    <span class="progress-step"></span>
+  </div>
+
+  <div class="wizard-tabs">
+    <span class="wizard-tab active">Identité</span>
+    <span class="wizard-tab">Église</span>
+    <span class="wizard-tab">Ministère</span>
+    <span class="wizard-tab">Études</span>
+    <span class="wizard-tab">Disponibilité</span>
+  </div>
+
+  <form
+    method="post"
+    enctype="multipart/form-data"
+    class="wizard-form"
+    novalidate
+  >
+    {% csrf_token %} {% if form.non_field_errors %}
+    <div class="errorlist">{{ form.non_field_errors }}</div>
+    {% endif %}
+
+    <div class="step-panel active" data-step="0">
+      <div class="wizard-card">
+        <div class="wizard-intro">Commençons par faire connaissance</div>
+        <label class="wizard-question" for="id_nom">Quel est votre nom ?</label>
+
+        <div class="field field-large">
+          {{ form.nom }} {% if form.nom.errors %}
+          <div class="errorlist">{{ form.nom.errors }}</div>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+
+    <div class="step-panel" data-step="1">
+      <div class="form-section compact-section">
+        <h2>Informations de l'église</h2>
+        <div class="form-grid">
+          {% for field in form %} {% if field.name in 'eglise_nom region_apostolique district_apostolique district_ancien' %}
+          <div class="field">
+            {{ field.label_tag }} {{ field }} {% if field.errors %}
+            <div class="errorlist">{{ field.errors }}</div>
+            {% endif %}
+          </div>
+          {% endif %} 
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+
+    <div class="step-panel" data-step="2">
+      <div class="form-section compact-section">
+        <h2>Identité et contact</h2>
+        <div class="form-grid">
+          {% for field in form %} {% if field.name in 'post_nom prenom lieu_naissance date_naissance etat_civil telephone email' %}
+          <div class="field">
+            {{ field.label_tag }} {{ field }} {% if field.errors %}
+            <div class="errorlist">{{ field.errors }}</div>
+            {% endif %}
+          </div>
+          {% endif %} 
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+
+    <div class="step-panel" data-step="3">
+      <div class="form-section compact-section">
+        <h2>Ministère et parcours</h2>
+        <div class="form-grid">
+          {% for field in form %} {% if field.name in 'baptise_eau_date baptise_eau_par saint_sceau_date saint_sceau_par communaute_origine date_ordination ministere ordination_par champ_apostolique' %}
+          <div class="field">
+            {{ field.label_tag }} {{ field }} {% if field.errors %}
+            <div class="errorlist">{{ field.errors }}</div>
+            {% endif %}
+          </div>
+          {% endif %} 
+          {% endfor %}
+        </div>
+
+        <div class="inline-section">
+          {{ formset.management_form }} {% for subform in formset %}
+          <div class="inline-formset">{{ subform.as_p }}</div>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+
+    <div class="step-panel" data-step="4">
+      <div class="form-section compact-section">
+        <h2>Études et photo</h2>
+        <div class="form-grid">
+          {% for field in form %} {% if field.name in 'photo niveau_etudes domaine_etudes' %}
+          <div class="field">
+            {{ field.label_tag }} {{ field }} 
+            {% if field.errors %}
+            <div class="errorlist">{{ field.errors }}</div>
+            {% endif %}
+          </div>
+          {% endif %} 
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+
+    <div class="step-panel" data-step="5">
+      <div class="form-section compact-section">
+        <h2>Disponibilité</h2>
+        <div class="form-grid">
+          {% for field in form %} {% if field.name in 'disponibilite lieu_remplissage date_remplissage signature' %}
+          <div class="field">
+            {{ field.label_tag }} {{ field }} {% if field.errors %}
+            <div class="errorlist">{{ field.errors }}</div>
+            {% endif %}
+          </div>
+          {% endif %} 
+          {% endfor %}
+        </div>
+
+        <div id="availability-message" class="availability-message hidden">
+          <strong>Disponibilité :</strong> la disponibilité partielle ou
+          indisponible nécessite validation pastorale avant affectation.
+        </div>
+      </div>
+    </div>
+
+    <div class="step-panel" data-step="6">
+      <div class="review-card">
+        <h2>Récapitulatif final</h2>
+        <div class="review-grid">
+          <div class="review-item">
+            <span>Nom</span><strong data-review="nom">-</strong>
+          </div>
+          <div class="review-item">
+            <span>Prénom</span><strong data-review="prenom">-</strong>
+          </div>
+          <div class="review-item">
+            <span>Téléphone</span><strong data-review="telephone">-</strong>
+          </div>
+          <div class="review-item">
+            <span>E-mail</span><strong data-review="email">-</strong>
+          </div>
+          <div class="review-item">
+            <span>Ministère</span><strong data-review="ministere">-</strong>
+          </div>
+          <div class="review-item">
+            <span>Champ apostolique</span
+            ><strong data-review="champ_apostolique">-</strong>
+          </div>
+          <div class="review-item">
+            <span>Disponibilité</span
+            ><strong data-review="disponibilite">-</strong>
+          </div>
+          <div class="review-item">
+            <span>Lieu de remplissage</span
+            ><strong data-review="lieu_remplissage">-</strong>
+          </div>
+        </div>
+        <p class="review-note">
+          Vérifiez les informations avant d’envoyer votre dossier. Vous pouvez
+          revenir en arrière pour corriger une réponse.
+        </p>
+      </div>
+    </div>
+
+    <div class="wizard-nav">
+      <button
+        type="button"
+        class="btn btn-secondary prev-btn"
+        aria-label="Précédent"
+      >
+        Précédent
+      </button>
+      <button
+        type="button"
+        class="btn btn-primary next-btn"
+        aria-label="Continuer"
+      >
+        Continuer
+      </button>
+      <button
+        type="submit"
+        class="btn btn-primary submit-btn hidden"
+        aria-label="Envoyer"
+      >
+        Envoyer
+      </button>
+    </div>
+
+    <div class="wizard-step-counter">
+      Étape <span id="step-number">1</span> sur 6
+    </div>
+  </form>
+</div>
+{% endblock %} {% block extra_js %}
+<script src="{% static 'serviteurs/js/wizard.js' %}"></script>
+{% endblock %}
