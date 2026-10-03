@@ -1,0 +1,55 @@
+{% load static %}
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Connexion administrative | ENAA</title>
+    <link
+      rel="stylesheet"
+      href="{% static 'serviteurs/css/style.css' %}?v=20261003-4"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"
+    />
+  </head>
+  <body class="auth-page">
+    <main class="auth-shell">
+      <section class="auth-card" aria-labelledby="login-title">
+        <div class="auth-brand">
+          <img
+            src="{% static 'WhatsApp Image 2026-09-28 at 15.11.54.jpeg' %}"
+            alt="Logo ENAA"
+            class="auth-logo"
+          />
+          <div>
+            <strong>ENAA</strong>
+            <span>Administration</span>
+          </div>
+        </div>
+
+        <div class="auth-heading">
+          <p class="eyebrow small">Bienvenue</p>
+          <h1 id="login-title">Connexion</h1>
+        </div>
+
+        <p class="auth-subtitle">Portail sécurisé de gestion ENAA.</p>
+
+        <form method="post" class="auth-form">
+          {% csrf_token %}
+          <div class="errorlist">{{ form.non_field_errors }}</div>
+          <div class="field">
+            {{ form.username.label_tag }} {{ form.username }}
+            <div class="errorlist">{{ form.username.errors }}</div>
+          </div>
+          <div class="field">
+            {{ form.password.label_tag }} {{ form.password }}
+            <div class="errorlist">{{ form.password.errors }}</div>
+          </div>
+          <button type="submit" class="btn btn-primary">Se connecter</button>
+        </form>
+      </section>
+    </main>
+  </body>
+</html>

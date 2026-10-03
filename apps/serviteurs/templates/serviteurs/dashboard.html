@@ -1,0 +1,130 @@
+{% extends 'serviteurs/base.html' %} {% load static %} {% block title %}Dashboard - ENAA{% endblock %} {% block content %}
+<section class="admin-dashboard container">
+  <main class="admin-main">
+    <header class="topbar">
+      <div>
+        <p class="eyebrow small">Tableau de bord</p>
+        <h1>
+          Bonjour, {{ request.user.get_full_name|default:request.user.username }} <i class="bi bi-hand-index-thumb-fill"></i>
+        </h1>
+        <p class="muted">Voici un aperçu des inscriptions des serviteurs.</p>
+      </div>
+
+      <!-- <div class="user-pill">
+        <span class="avatar"
+          >{{ request.user.get_full_name|default:request.user.username|first|upper }}</span
+        >
+        <div>
+          <strong>{{ request.user.get_full_name|default:request.user.username }}</strong>
+          <small>{% if request.user.is_superuser %}Superutilisateur{% elif request.user.is_staff %}Administrateur{% else %}Utilisateur{% endif %}</small
+          >
+        </div>
+      </div> -->
+    </header>
+
+    <section class="stats-grid" aria-label="Statistiques">
+      <article class="stat-card">
+        <div class="stat-icon neutral"><i class="bi bi-people-fill"></i></div>
+        <div class="stat-meta">
+          <span>Total des serviteurs</span>
+          <strong>{{ total }}</strong>
+          <small>{{ this_month }} ce mois</small>
+        </div>
+      </article>
+
+      <article class="stat-card">
+        <div class="stat-icon green"><i class="bi bi-calendar-event"></i></div>
+        <div class="stat-meta">
+          <span>Inscriptions aujourd'hui</span>
+          <strong>{{ today }}</strong>
+          <small>aujourd’hui</small>
+        </div>
+      </article>
+
+      <article class="stat-card">
+        <div class="stat-icon blue"><i class="bi bi-graph-up-arrow"></i></div>
+        <div class="stat-meta">
+          <span>Cette semaine</span>
+          <strong>{{ this_week }}</strong>
+          <small>7 derniers jours</small>
+        </div>
+      </article>
+
+      <article class="stat-card">
+        <div class="stat-icon purple"><i class="bi bi-calendar3"></i></div>
+        <div class="stat-meta">
+          <span>Ce mois</span>
+          <strong>{{ this_month }}</strong>
+          <small>inscriptions</small>
+        </div>
+      </article>
+    </section>
+
+    <section class="panel">
+      <div class="panel-head">
+        <div>
+          <p class="eyebrow small">Suivi</p>
+          <h2>Dernières inscriptions</h2>
+        </div>
+        <a href="{% url 'serviteurs:lister' %}" class="link-inline"
+          >Voir toutes les inscriptions →</a
+        >
+      </div>
+
+      <div class="table-wrapper">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Photo</th>
+              <th>Nom complet</th>
+              <th>Ministère</th>
+              <th>Champ apostolique</th>
+              <th>Date</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for serviteur in recent %}
+            <tr>
+              <td>
+                {% if serviteur.photo %}
+                <img
+                  src="{{ serviteur.photo.url }}"
+                  alt="{{ serviteur.nom_complet }}"
+                  class="mini-avatar"
+                />
+                {% else %}
+                <span class="mini-avatar placeholder">N</span>
+                {% endif %}
+              </td>
+              <td>{{ serviteur.nom_complet }}</td>
+              <td>{{ serviteur.ministere|default:'—' }}</td>
+              <td>{{ serviteur.champ_apostolique|default:'—' }}</td>
+              <td>{{ serviteur.created_at|date:'d F Y' }}</td>
+              <td>
+                <a
+                  href="{% url 'serviteurs:detail' serviteur.pk %}"
+                  class="table-action"
+                  >Voir</a
+                >
+              </td>
+            </tr>
+            {% empty %}
+            <tr>
+              <td colspan="6">
+                <div class="empty-state compact">
+                  <span class="empty-icon"
+                    ><i class="bi bi-file-earmark-text"></i
+                  ></span>
+                  <p>Aucune inscription récente pour le moment.</p>
+                </div>
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </section>
+  </main>
+</section>
+{% endblock %}

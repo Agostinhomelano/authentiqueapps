@@ -1,0 +1,57 @@
+{% extends 'serviteurs/base.html' %} {% load static %} {% block title %}Église
+Nouvel Apostolat Authentique{% endblock %} {% block content %}
+<section class="home-hero">
+  <img
+    class="home-hero-image"
+    src="{% static 'images/enaa-hero.jpg' %}"
+    alt=""
+    aria-hidden="true"
+  />
+  <div class="home-hero-content container">
+    <p class="hero-kicker">Église Nouvel Apostolat Authentique · RDC</p>
+    <h1>Servir avec foi,<br />avancer avec espérance.</h1>
+    <p>
+      La fiche officielle d’identification des serviteurs de Dieu de l’ENAA.
+    </p>
+    <a href="{% url 'inscription' %}" class="btn btn-primary"
+      >Commencer mon inscription</a
+    >
+  </div>
+</section>
+
+<section class="container process-shell">
+  <div class="section-head">
+    <p class="eyebrow small">Processus</p>
+    <h2>Comment s’inscrit un serviteur ?</h2>
+  </div>
+
+  <div class="steps-grid">
+    <article class="step-card">
+      <span class="step-number">01</span>
+      <h3>Remplir la fiche</h3>
+      <p>
+        Identifier le serviteur, son ministère, son parcours et ses informations
+        essentielles.
+      </p>
+    </article>
+
+    <article class="step-card">
+      <span class="step-number">02</span>
+      <h3>Vérifier les informations</h3>
+      <p>
+        Contrôler les données avant validation et éviter les erreurs
+        administratives.
+      </p>
+    </article>
+
+    <article class="step-card">
+      <span class="step-number">03</span>
+      <h3>Envoyer</h3>
+      <p>
+        Transmettre le dossier pour suivi par l’équipe de coordination de
+        l’ENAA.
+      </p>
+    </article>
+  </div>
+</section>
+{% endblock %}

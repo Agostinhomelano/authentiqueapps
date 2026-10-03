@@ -1,0 +1,36 @@
+{% extends 'serviteurs/base.html' %} {% block title %}Exportations - ENAA{% endblock %} {% block content %}
+<section class="page-shell container">
+  <header class="content-header">
+    <div>
+      <p class="eyebrow small">Administration</p>
+      <h1>Exportations</h1>
+      <p>Récupérez les données du registre ENAA selon le format souhaité.</p>
+    </div>
+  </header>
+
+  <div
+    class="detail-grid"
+    style="grid-template-columns: repeat(2, minmax(0, 1fr))"
+  >
+    <article class="info-card">
+      <h2>CSV</h2>
+      <p class="muted">Exporter les données au format CSV.</p>
+      <a href="{% url 'serviteurs:export_csv' %}" class="btn btn-primary"
+        >Exporter CSV</a
+      >
+    </article>
+
+    <article class="info-card">
+      <h2>Excel</h2>
+      <p class="muted">Exporter les données au format Excel.</p>
+      <a href="{% url 'serviteurs:export_excel' %}" class="btn btn-primary"
+        >Exporter Excel</a
+      >
+    </article>
+  </div>
+
+  <div class="empty-state" style="margin-top: 1.2rem">
+    <p>Les caractères accentués sont conservés.</p>
+  </div>
+</section>
+{% endblock %}

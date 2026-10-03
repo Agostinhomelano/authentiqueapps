@@ -1,0 +1,128 @@
+{% extends 'serviteurs/base.html' %} {% block title %}Paramètres{% endblock %}
+{% block content %}
+<section class="page-shell container account-settings-page">
+  <header class="content-header">
+    <div>
+      <p class="eyebrow small">Espace administrateur</p>
+      <h1>Paramètres</h1>
+      <p>Gérez les informations et la sécurité de votre compte.</p>
+    </div>
+  </header>
+
+  <div class="account-settings-grid">
+    <section
+      class="account-settings-panel profile-settings-panel"
+      aria-labelledby="profile-title"
+    >
+      <div class="account-settings-heading">
+        <span class="account-settings-icon" aria-hidden="true"
+          ><i class="bi bi-person-gear"></i
+        ></span>
+        <div>
+          <h2 id="profile-title">Mon profil</h2>
+          <p>Informations utilisées pour votre compte administrateur.</p>
+        </div>
+      </div>
+
+      <div class="account-profile-summary">
+        <span class="account-avatar">{{ account_initial }}</span>
+        <div>
+          <strong>{{ account_display_name }}</strong>
+          <span>{{ request.user.email }}</span>
+        </div>
+      </div>
+
+      <form method="post" class="account-settings-form">
+        {% csrf_token %} {{ form.as_p }}
+        <div class="account-settings-actions">
+          <button type="submit" class="btn btn-primary">
+            <i class="bi bi-check2" aria-hidden="true"></i> Enregistrer le
+            profil
+          </button>
+        </div>
+      </form>
+    </section>
+
+    <section
+      class="account-settings-panel password-settings-panel"
+      aria-labelledby="password-title"
+    >
+      <div class="account-settings-heading">
+        <span class="account-settings-icon" aria-hidden="true"
+          ><i class="bi bi-shield-lock"></i
+        ></span>
+        <div>
+          <h2 id="password-title">Sécurité</h2>
+          <p>Modifiez votre mot de passe pour protéger l’accès au compte.</p>
+        </div>
+      </div>
+
+      <form method="post" class="account-settings-form">
+        {% csrf_token %}
+        <input type="hidden" name="form_type" value="password" />
+        {{ password_form.as_p }}
+        <div class="account-settings-actions">
+          <button type="submit" class="btn btn-primary">
+            <i class="bi bi-shield-check" aria-hidden="true"></i> Modifier le
+            mot de passe
+          </button>
+        </div>
+      </form>
+    </section>
+
+    <section
+      class="account-settings-panel account-status-panel"
+      aria-labelledby="account-title"
+    >
+      <div class="account-settings-heading">
+        <span class="account-settings-icon" aria-hidden="true"
+          ><i class="bi bi-person-vcard"></i
+        ></span>
+        <div>
+          <h2 id="account-title">Compte</h2>
+          <p>État actuel de votre accès à l’application.</p>
+        </div>
+      </div>
+      <dl class="account-status-list">
+        <div>
+          <dt>Rôle</dt>
+          <dd>{{ account_role }}</dd>
+        </div>
+        <div>
+          <dt>Statut</dt>
+          <dd>{{ account_status }}</dd>
+        </div>
+        <div>
+          <dt>Identifiant</dt>
+          <dd>{{ account_username }}</dd>
+        </div>
+      </dl>
+    </section>
+
+    <section
+      class="account-settings-panel account-preferences-panel"
+      aria-labelledby="preferences-title"
+    >
+      <div class="account-settings-heading">
+        <span class="account-settings-icon" aria-hidden="true"
+          ><i class="bi bi-sliders"></i
+        ></span>
+        <div>
+          <h2 id="preferences-title">Préférences de l’application</h2>
+          <p>Paramètres régionaux utilisés par votre interface.</p>
+        </div>
+      </div>
+      <dl class="account-status-list">
+        <div>
+          <dt>Langue</dt>
+          <dd>{{ account_language }}</dd>
+        </div>
+        <div>
+          <dt>Fuseau horaire</dt>
+          <dd>{{ account_timezone }}</dd>
+        </div>
+      </dl>
+    </section>
+  </div>
+</section>
+{% endblock %}

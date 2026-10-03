@@ -1,138 +1,195 @@
 {% extends 'serviteurs/base.html' %} {% block title %}{{ serviteur.nom_complet
 }}{% endblock %} {% block content %}
-<section class="page-header detail-header">
-  <div>
-    <h1>{{ serviteur.nom_complet }}</h1>
-    <p>Fiche détaillée du serviteur.</p>
+<section class="page-shell container">
+  <div class="detail-topbar">
+    <a href="{% url 'serviteurs:lister' %}" class="back-link btn btn-secondary">
+      <i class="bi bi-arrow-left" aria-hidden="true"></i> Retour aux serviteurs
+    </a>
+
+    <div class="header-actions">
+      <a
+        class="btn btn-secondary"
+        href="{% url 'serviteurs:modifier' serviteur.pk %}"
+        >Modifier</a
+      >
+      <button class="btn btn-primary" onclick="window.print()">Imprimer</button>
+      <a
+        class="btn btn-secondary danger"
+        href="{% url 'serviteurs:supprimer' serviteur.pk %}"
+        >Supprimer</a
+      >
+    </div>
   </div>
-  <div class="header-actions">
-    <a
-      class="btn btn-secondary"
-      href="{% url 'serviteurs:modifier' serviteur.pk %}"
-      >Modifier</a
-    >
-    <a
-      class="btn btn-secondary"
-      href="{% url 'serviteurs:supprimer' serviteur.pk %}"
-      >Supprimer</a
-    >
-    <button class="btn btn-primary" onclick="window.print()">Imprimer</button>
+
+  <div class="profile-card">
+    <div class="profile-avatar-wrap">
+      {% if serviteur.photo %}
+      <img
+        src="{{ serviteur.photo.url }}"
+        alt="{{ serviteur.nom_complet }}"
+        class="profile-avatar"
+      />
+      {% else %}
+      <div class="profile-avatar placeholder">
+        {{ serviteur.prenom|first|default:'S' }}
+      </div>
+      {% endif %}
+    </div>
+
+    <div class="profile-summary">
+      <p class="eyebrow small">Fiche de serviteur</p>
+      <h1>{{ serviteur.nom_complet }}</h1>
+      <div class="profile-badges">
+        <span>{{ serviteur.ministere|default:'Ministère non renseigné' }}</span>
+        <span
+          >{{ serviteur.champ_apostolique|default:'Champ apostolique non
+          renseigné' }}</span
+        >
+      </div>
+      <div class="meta-row">
+        <span>Date d’inscription</span>
+        <strong>{{ serviteur.created_at|date:'d F Y' }}</strong>
+      </div>
+    </div>
+  </div>
+
+  <div class="detail-grid">
+    <article class="info-card">
+      <h2>Identité</h2>
+      <ul class="detail-list">
+        <li>
+          <span>Nom</span><strong>{{ serviteur.nom|default:'—' }}</strong>
+        </li>
+        <li>
+          <span>Post nom</span
+          ><strong>{{ serviteur.post_nom|default:'—' }}</strong>
+        </li>
+        <li>
+          <span>Prénom</span><strong>{{ serviteur.prenom|default:'—' }}</strong>
+        </li>
+        <li>
+          <span>Lieu et date de naissance</span
+          ><strong
+            >{{ serviteur.lieu_naissance|default:'—' }}{% if
+            serviteur.date_naissance %}, {{ serviteur.date_naissance|date:'d F
+            Y' }}{% endif %}</strong
+          >
+        </li>
+        <li>
+          <span>État civil</span
+          ><strong>{{ serviteur.get_etat_civil_display|default:'—' }}</strong>
+        </li>
+        <li>
+          <span>Adresse</span
+          ><strong>{{ serviteur.adresse|default:'—' }}</strong>
+        </li>
+        <li>
+          <span>Téléphone</span
+          ><strong>{{ serviteur.telephone|default:'—' }}</strong>
+        </li>
+        <li>
+          <span>Email</span><strong>{{ serviteur.email|default:'—' }}</strong>
+        </li>
+      </ul>
+    </article>
+
+    <article class="info-card">
+      <h2>Ministère</h2>
+      <ul class="detail-list">
+        <li>
+          <span>Date de baptême d’eau</span
+          ><strong>{{ serviteur.baptise_eau_date|default:'—' }}</strong>
+        </li>
+        <li>
+          <span>Par</span
+          ><strong>{{ serviteur.baptise_eau_par|default:'—' }}</strong>
+        </li>
+        <li>
+          <span>Date de Saint Scellé</span
+          ><strong>{{ serviteur.saint_sceau_date|default:'—' }}</strong>
+        </li>
+        <li>
+          <span>Par</span
+          ><strong>{{ serviteur.saint_sceau_par|default:'—' }}</strong>
+        </li>
+        <li>
+          <span>Communauté d’origine</span
+          ><strong>{{ serviteur.communaute_origine|default:'—' }}</strong>
+        </li>
+        <li>
+          <span>Date d’ordination</span
+          ><strong>{{ serviteur.date_ordination|default:'—' }}</strong>
+        </li>
+        <li>
+          <span>Ministère</span
+          ><strong>{{ serviteur.ministere|default:'—' }}</strong>
+        </li>
+        <li>
+          <span>Ordonné par</span
+          ><strong>{{ serviteur.ordination_par|default:'—' }}</strong>
+        </li>
+        <li>
+          <span>Champ apostolique affecté</span
+          ><strong>{{ serviteur.champ_apostolique|default:'—' }}</strong>
+        </li>
+      </ul>
+    </article>
+
+    <article class="info-card wide-card">
+      <h2>Curriculum ministériel</h2>
+      {% if curriculum %}
+      <div class="timeline">
+        {% for item in curriculum %}
+        <div class="timeline-item">
+          <span class="timeline-dot"></span>
+          <div>
+            <strong>{{ item.annee|default:'Année' }}</strong>
+            <p>{{ item.libelle }}</p>
+            {% if item.details %}<small>{{ item.details }}</small>{% endif %}
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+      {% else %}
+      <p class="muted">Aucun parcours ministériel enregistré.</p>
+      {% endif %}
+    </article>
+
+    <article class="info-card">
+      <h2>Études</h2>
+      <ul class="detail-list">
+        <li>
+          <span>Niveau</span
+          ><strong>{{ serviteur.niveau_etudes|default:'—' }}</strong>
+        </li>
+        <li>
+          <span>Domaine</span
+          ><strong>{{ serviteur.domaine_etudes|default:'—' }}</strong>
+        </li>
+      </ul>
+    </article>
+
+    <article class="info-card">
+      <h2>Disponibilité</h2>
+      <ul class="detail-list">
+        <li>
+          <span>Disponibilité</span
+          ><strong>{{ serviteur.get_disponibilite_display }}</strong>
+        </li>
+        <li>
+          <span>Lieu de remplissage</span
+          ><strong>{{ serviteur.lieu_remplissage|default:'—' }}</strong>
+        </li>
+        <li>
+          <span>Date</span
+          ><strong>{{ serviteur.date_remplissage|default:'—' }}</strong>
+        </li>
+        <li>
+          <span>Signature</span
+          ><strong>{{ serviteur.signature|default:'—' }}</strong>
+        </li>
+      </ul>
+    </article>
   </div>
 </section>
-
-<div class="detail-grid">
-  <div class="info-card">
-    <h2>Informations de l'église</h2>
-    <p><strong>Église :</strong> {{ serviteur.eglise_nom }}</p>
-    <p>
-      <strong>Région Apostolique :</strong> {{
-      serviteur.region_apostolique|default:'-' }}
-    </p>
-    <p>
-      <strong>District Apostolique :</strong> {{
-      serviteur.district_apostolique|default:'-' }}
-    </p>
-    <p>
-      <strong>District d'Ancien :</strong> {{
-      serviteur.district_ancien|default:'-' }}
-    </p>
-  </div>
-
-  <div class="info-card">
-    <h2>Identité</h2>
-    <p><strong>Nom complet :</strong> {{ serviteur.nom_complet }}</p>
-    <p>
-      <strong>Lieu et date de naissance :</strong> {{
-      serviteur.lieu_naissance|default:'-' }} {% if serviteur.date_naissance
-      %}{{ serviteur.date_naissance }}{% endif %}
-    </p>
-    <p>
-      <strong>État civil :</strong> {{
-      serviteur.get_etat_civil_display|default:'-' }}
-    </p>
-    <p><strong>Téléphone :</strong> {{ serviteur.telephone }}</p>
-    <p><strong>E-mail :</strong> {{ serviteur.email|default:'-' }}</p>
-    {% if serviteur.photo %}
-    <img
-      src="{{ serviteur.photo.url }}"
-      alt="Photo du serviteur"
-      class="detail-photo"
-    />
-    {% endif %}
-  </div>
-
-  <div class="info-card">
-    <h2>Ministère</h2>
-    <p>
-      <strong>Date de baptême d'eau :</strong> {{
-      serviteur.baptise_eau_date|default:'-' }}
-    </p>
-    <p>
-      <strong>Personne ayant effectué le baptême :</strong> {{
-      serviteur.baptise_eau_par|default:'-' }}
-    </p>
-    <p>
-      <strong>Date de Saint Scellé :</strong> {{
-      serviteur.saint_sceau_date|default:'-' }}
-    </p>
-    <p>
-      <strong>Personne ayant effectué le Saint Scellé :</strong> {{
-      serviteur.saint_sceau_par|default:'-' }}
-    </p>
-    <p>
-      <strong>Communauté d'origine :</strong> {{
-      serviteur.communaute_origine|default:'-' }}
-    </p>
-    <p>
-      <strong>Date d'ordination actuelle :</strong> {{
-      serviteur.date_ordination|default:'-' }}
-    </p>
-    <p><strong>Ministère :</strong> {{ serviteur.ministere|default:'-' }}</p>
-    <p>
-      <strong>Personne ayant effectué l'ordination :</strong> {{
-      serviteur.ordination_par|default:'-' }}
-    </p>
-    <p>
-      <strong>Champ apostolique :</strong> {{
-      serviteur.champ_apostolique|default:'-' }}
-    </p>
-  </div>
-
-  <div class="info-card">
-    <h2>Curriculum ministériel</h2>
-    {% if curriculum %}
-    <ol>
-      {% for item in curriculum %}
-      <li>
-        <strong>{{ item.ordre }}.</strong>
-        {{ item.libelle }} {% if item.annee %}({{ item.annee }}){% endif %} {%
-        if item.details %}<br />{{ item.details }}{% endif %}
-      </li>
-      {% endfor %}
-    </ol>
-    {% else %}
-    <p>Aucun parcours ministériel enregistré.</p>
-    {% endif %}
-  </div>
-
-  <div class="info-card">
-    <h2>Études faites</h2>
-    <p><strong>Niveau :</strong> {{ serviteur.niveau_etudes|default:'-' }}</p>
-    <p><strong>Domaine :</strong> {{ serviteur.domaine_etudes|default:'-' }}</p>
-  </div>
-
-  <div class="info-card">
-    <h2>Autres</h2>
-    <p>
-      <strong>Disponibilité à l'œuvre :</strong> {{
-      serviteur.get_disponibilite_display }}
-    </p>
-    <p>
-      <strong>Lieu de remplissage :</strong> {{
-      serviteur.lieu_remplissage|default:'-' }}
-    </p>
-    <p><strong>Date :</strong> {{ serviteur.date_remplissage|default:'-' }}</p>
-    <p><strong>Signature :</strong> {{ serviteur.signature|default:'-' }}</p>
-  </div>
-</div>
 {% endblock %}

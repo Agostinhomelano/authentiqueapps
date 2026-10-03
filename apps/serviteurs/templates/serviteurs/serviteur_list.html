@@ -1,72 +1,157 @@
-{% extends 'serviteurs/base.html' %} {% block title %}Serviteurs enregistrés
-{% endblock %} {% block content %}
-<section class="page-header">
-  <div>
-    <h1>Serviteurs enregistrés</h1>
-    <p>Consultez, recherchez et gérez les fiches de service.</p>
-  </div>
-  <div class="header-actions">
-    <a class="btn btn-primary" href="{% url 'serviteurs:nouveau' %}"
-      >+ Nouveau serviteur</a
-    >
-    <a class="btn btn-secondary" href="{% url 'serviteurs:export_csv' %}"
-      >Exporter CSV</a
-    >
-    <a class="btn btn-secondary" href="{% url 'serviteurs:export_excel' %}"
-      >Exporter Excel</a
-    >
+{% extends 'serviteurs/base.html' %} {% block title %}Serviteurs - ENAA{% endblock %} {% block content %}
+<section class="page-shell container">
+  <header class="content-header">
+    <div>
+      <p class="eyebrow small">Gestion</p>
+      <h1>Serviteurs</h1>
+      <p>Consultez et gérez les fiches d’identification.</p>
+    </div>
+
+    <div class="header-actions">
+      <a class="btn btn-primary" href="{% url 'serviteurs:nouveau' %}">
+        <i class="bi bi-plus-lg"></i> Nouveau
+      </a>
+      <a class="btn btn-secondary" href="{% url 'serviteurs:exportations' %}">
+        <i class="bi bi-upload"></i> Exporter
+      </a>
+    </div>
+  </header>
+
+  <form class="filter-panel" method="get">
+    <div class="search-field">
+      <span><i class="bi bi-search"></i></span>
+      <input
+        type="search"
+        name="q"
+        value="{{ query }}"
+        placeholder="Rechercher un serviteur..."
+        aria-label="Rechercher un serviteur"
+      />
+    </div>
+
+    <div class="filter-grid">
+      <label>
+        <span>Ministère</span>
+        <select name="ministere">
+          <option value="">Tous</option>
+          {% for item in ministeres %}
+          <option
+            value="{{ item }}"
+            {%
+            if
+            item=""
+            ="ministere"
+            %}selected{%
+            endif
+            %}
+          >
+            {{ item }}
+          </option>
+          {% endfor %}
+        </select>
+      </label>
+
+      <label>
+        <span>Champ apostolique</span>
+        <select name="champ">
+          <option value="">Tous</option>
+          {% for item in champs %}
+          <option
+            value="{{ item }}"
+            {%
+            if
+            item=""
+            ="champ"
+            %}selected{%
+            endif
+            %}
+          >
+            {{ item }}
+          </option>
+          {% endfor %}
+        </select>
+      </label>
+
+      <label>
+        <span>Date</span>
+        <input type="date" name="date" value="{{ date_filter }}" />
+      </label>
+    </div>
+
+    <div class="filter-actions">
+      <button type="submit" class="btn btn-primary">Appliquer</button>
+      {% if query or ministere or champ or date_filter %}
+      <a class="btn btn-secondary" href="{% url 'serviteurs:lister' %}"
+        >Réinitialiser</a
+      >
+      {% endif %}
+    </div>
+  </form>
+
+  <div class="table-card">
+    <div class="table-wrapper">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Photo</th>
+            <th>Nom complet</th>
+            <th>Ministère</th>
+            <th>Champ apostolique</th>
+            <th>Date</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for serviteur in serviteurs %}
+          <tr>
+            <td>
+              {% if serviteur.photo %}
+              <img
+                src="{{ serviteur.photo.url }}"
+                alt="{{ serviteur.nom_complet }}"
+                class="mini-avatar"
+              />
+              {% else %}
+              <span class="mini-avatar placeholder">N</span>
+              {% endif %}
+            </td>
+            <td>
+              <div class="user-cell">
+                <strong>{{ serviteur.nom_complet }}</strong>
+                <small>{{ serviteur.telephone }}</small>
+              </div>
+            </td>
+            <td>{{ serviteur.ministere|default:'—' }}</td>
+            <td>{{ serviteur.champ_apostolique|default:'—' }}</td>
+            <td>{{ serviteur.created_at|date:'d F Y' }}</td>
+            <td>
+              <a
+                href="{% url 'serviteurs:detail' serviteur.pk %}"
+                class="table-action"
+                >Voir</a
+              >
+            </td>
+          </tr>
+          {% empty %}
+          <tr>
+            <td colspan="6">
+              <div class="empty-state">
+                <span class="empty-icon"><i class="bi bi-file-earmark-text"></i></span>
+                <h3>Aucun serviteur enregistré</h3>
+                <p>
+                  Les inscriptions apparaîtront ici une fois qu’un serviteur
+                  aura rempli sa fiche.
+                </p>
+                <a href="{% url 'serviteurs:nouveau' %}" class="btn btn-primary"
+                  >Ajouter un serviteur</a
+                >
+              </div>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
   </div>
 </section>
-
-<form class="search-box" method="get">
-  <input
-    type="search"
-    name="q"
-    value="{{ query }}"
-    placeholder="Rechercher par nom, téléphone ou ministère"
-    aria-label="Rechercher"
-  />
-  <button type="submit" class="btn btn-primary">Rechercher</button>
-</form>
-
-<div class="grid cards">
-  {% for serviteur in serviteurs %}
-  <article class="card">
-    {% if serviteur.photo %}
-    <img
-      src="{{ serviteur.photo.url }}"
-      alt="{{ serviteur.nom_complet }}"
-      class="thumb"
-    />
-    {% else %}
-    <div class="thumb placeholder">Photo</div>
-    {% endif %}
-    <div class="card-body">
-      <h3>{{ serviteur.nom_complet }}</h3>
-      <p><strong>Téléphone :</strong> {{ serviteur.telephone }}</p>
-      <p>
-        <strong>Ministère :</strong> {{ serviteur.ministere|default:'Non
-        renseigné' }}
-      </p>
-      <p>
-        <strong>Champ apostolique :</strong> {{
-        serviteur.champ_apostolique|default:'Non renseigné' }}
-      </p>
-      <p>
-        <strong>Disponibilité :</strong> {{ serviteur.get_disponibilite_display
-        }}
-      </p>
-      <div class="card-links">
-        <a href="{% url 'serviteurs:detail' serviteur.pk %}">Voir</a>
-        <a href="{% url 'serviteurs:modifier' serviteur.pk %}">Modifier</a>
-        <a href="{% url 'serviteurs:supprimer' serviteur.pk %}">Supprimer</a>
-      </div>
-    </div>
-  </article>
-  {% empty %}
-  <div class="empty-state">
-    <p>Aucun serviteur ne correspond à votre recherche pour le moment.</p>
-  </div>
-  {% endfor %}
-</div>
 {% endblock %}

@@ -1,16 +1,24 @@
-{% extends 'serviteurs/base.html' %} 
-{% load static %} 
-{% block title %}
-{{ title}}
-{% endblock %} 
-{% block content %}
+{% extends 'serviteurs/base.html' %} {% load static %} {% block title %}
+Identification du Serviteur de Dieu {% endblock %} {% block content %}
 <div class="wizard-shell">
-  <div class="wizard-header">
-    <div class="logo-box">LOGO</div>
-    <div class="brand-name">ÉGLISE NOUVEL APOSTOLAT AUTHENTIQUE</div>
-  </div>
-
   <div class="wizard-title">Identification du Serviteur de Dieu</div>
+
+  {% if user.is_authenticated %}
+  <div class="wizard-back-action">
+    {% if serviteur %}
+    <a
+      href="{% url 'serviteurs:detail' serviteur.pk %}"
+      class="btn btn-secondary"
+    >
+      <i class="bi bi-arrow-left" aria-hidden="true"></i> Retour à la fiche
+    </a>
+    {% else %}
+    <a href="{% url 'serviteurs:lister' %}" class="btn btn-secondary">
+      <i class="bi bi-arrow-left" aria-hidden="true"></i> Retour aux serviteurs
+    </a>
+    {% endif %}
+  </div>
+  {% endif %}
 
   <div class="wizard-progress" aria-label="Progression">
     <span class="progress-step active"></span>
@@ -23,10 +31,11 @@
 
   <div class="wizard-tabs">
     <span class="wizard-tab active">Identité</span>
-    <span class="wizard-tab">Église</span>
     <span class="wizard-tab">Ministère</span>
+    <span class="wizard-tab">Curriculum</span>
     <span class="wizard-tab">Études</span>
     <span class="wizard-tab">Disponibilité</span>
+    <span class="wizard-tab">Vérification</span>
   </div>
 
   <form
@@ -40,101 +49,326 @@
     {% endif %}
 
     <div class="step-panel active" data-step="0">
-      <div class="wizard-card">
-        <div class="wizard-intro">Commençons par faire connaissance</div>
-        <label class="wizard-question" for="id_nom">Quel est votre nom ?</label>
+      <div class="form-section compact-section">
+        <h2>Identité et contact</h2>
 
-        <div class="field field-large">
-          {{ form.nom }} {% if form.nom.errors %}
-          <div class="errorlist">{{ form.nom.errors }}</div>
-          {% endif %}
+        <div class="photo-upload-card">
+          <div class="photo-upload-preview" id="photoPreview">
+            {% if form.instance and form.instance.photo %}
+            <img src="{{ form.instance.photo.url }}" alt="Photo actuelle" />
+            {% else %}
+            <div class="photo-placeholder">
+              <span>📷</span>
+              <small>Ajouter une photo</small>
+            </div>
+            {% endif %}
+          </div>
+
+          <div class="photo-upload-content">
+            <div class="photo-upload-label">Photo de profil</div>
+            <label for="{{ form.photo.id_for_label }}" class="upload-trigger"
+              >Choisir une photo</label
+            >
+            <div class="hidden-file-input">{{ form.photo }}</div>
+            <small>Formats acceptés : JPG, JPEG, PNG ou WEBP • 2 Mo max</small>
+            {% if form.photo.errors %}
+            <div class="errorlist">{{ form.photo.errors }}</div>
+            {% endif %}
+          </div>
+        </div>
+
+        <div class="form-grid">
+          <div class="field">
+            <label for="id_nom">Nom de famille</label>
+            {{ form.nom }} {{ form.nom.errors }}
+          </div>
+          <div class="field">
+            <label for="id_post_nom">Post nom</label>
+            {{ form.post_nom }} {{ form.post_nom.errors }}
+          </div>
+          <div class="field">
+            <label for="id_prenom">Prénom</label>
+            {{ form.prenom }} {{ form.prenom.errors }}
+          </div>
+          <div class="field">
+            <label for="id_lieu_naissance">Lieu de naissance</label>
+            {{ form.lieu_naissance }} {{ form.lieu_naissance.errors }}
+          </div>
+          <div class="field">
+            <label for="id_date_naissance">Date de naissance</label>
+            {{ form.date_naissance }} {{ form.date_naissance.errors }}
+          </div>
+          <div class="field">
+            <label for="id_etat_civil">État civil</label>
+            {{ form.etat_civil }} {{ form.etat_civil.errors }}
+          </div>
+          <div class="field field-wide">
+            <label for="id_adresse">Adresse</label>
+            {{ form.adresse }} {{ form.adresse.errors }}
+          </div>
+          <div class="field">
+            <label for="id_telephone">Téléphone (WhatsApp)</label>
+            {{ form.telephone }} {{ form.telephone.errors }}
+          </div>
+          <div class="field">
+            <label for="id_email">E-mail</label>
+            {{ form.email }} {{ form.email.errors }}
+          </div>
         </div>
       </div>
     </div>
 
     <div class="step-panel" data-step="1">
       <div class="form-section compact-section">
-        <h2>Informations de l'église</h2>
+        <h2>Ministère et parcours</h2>
         <div class="form-grid">
-          {% for field in form %} {% if field.name in 'eglise_nom region_apostolique district_apostolique district_ancien' %}
           <div class="field">
-            {{ field.label_tag }} {{ field }} {% if field.errors %}
-            <div class="errorlist">{{ field.errors }}</div>
-            {% endif %}
+            <label for="id_eglise_nom">Église</label>
+            {{ form.eglise_nom }} {{ form.eglise_nom.errors }}
           </div>
-          {% endif %} 
-          {% endfor %}
+          <div class="field">
+            <label for="id_region_apostolique">Région apostolique</label>
+            {{ form.region_apostolique }} {{ form.region_apostolique.errors }}
+          </div>
+          <div class="field">
+            <label for="id_district_apostolique">District apostolique</label>
+            {{ form.district_apostolique }} {{ form.district_apostolique.errors
+            }}
+          </div>
+          <div class="field">
+            <label for="id_district_ancien">District d’ancien</label>
+            {{ form.district_ancien }} {{ form.district_ancien.errors }}
+          </div>
+          <div class="field">
+            <label for="id_baptise_eau_date">Date de baptême d’eau</label>
+            {{ form.baptise_eau_date }} {{ form.baptise_eau_date.errors }}
+          </div>
+          <div class="field">
+            <label for="id_baptise_eau_par">Baptisé par</label>
+            {{ form.baptise_eau_par }} {{ form.baptise_eau_par.errors }}
+          </div>
+          <div class="field">
+            <label for="id_saint_sceau_date">Date de Saint Scellé</label>
+            {{ form.saint_sceau_date }} {{ form.saint_sceau_date.errors }}
+          </div>
+          <div class="field">
+            <label for="id_saint_sceau_par">Saint Scellé par</label>
+            {{ form.saint_sceau_par }} {{ form.saint_sceau_par.errors }}
+          </div>
+          <div class="field">
+            {{ form.communaute_origine.label_tag }} {{ form.communaute_origine
+            }} {{ form.communaute_origine.errors }}
+          </div>
+          <div class="field">
+            <label for="id_date_ordination">Date d’ordination</label>
+            {{ form.date_ordination }} {{ form.date_ordination.errors }}
+          </div>
+          <div class="field">
+            <label for="id_ministere">Ministère</label>
+            {{ form.ministere }} {{ form.ministere.errors }}
+          </div>
+          <div class="field">
+            <label for="id_ordination_par">Ordonné par</label>
+            {{ form.ordination_par }} {{ form.ordination_par.errors }}
+          </div>
+          <div class="field">
+            <label for="id_champ_apostolique">Champ apostolique affecté</label>
+            {{ form.champ_apostolique }} {{ form.champ_apostolique.errors }}
+          </div>
         </div>
       </div>
     </div>
 
     <div class="step-panel" data-step="2">
       <div class="form-section compact-section">
-        <h2>Identité et contact</h2>
-        <div class="form-grid">
-          {% for field in form %} {% if field.name in 'post_nom prenom lieu_naissance date_naissance etat_civil telephone email' %}
-          <div class="field">
-            {{ field.label_tag }} {{ field }} {% if field.errors %}
-            <div class="errorlist">{{ field.errors }}</div>
-            {% endif %}
-          </div>
-          {% endif %} 
+        <h2>Curriculum ministériel</h2>
+        <div class="curriculum-list" id="curriculum-list">
+          {{ formset.management_form }} {% for subform in formset %}
+          <article class="curriculum-item" data-curriculum-item>
+            {{ subform.id }} {{ subform.ordre }}
+            <input
+              type="hidden"
+              name="{{ subform.prefix }}-DELETE"
+              id="id_{{ subform.prefix }}-DELETE"
+              value=""
+            />
+            <div class="curriculum-summary">
+              <span class="curriculum-year" data-year></span>
+              <h3 data-title></h3>
+              <p data-details></p>
+              <div class="curriculum-actions">
+                <button type="button" class="btn btn-secondary curriculum-edit">
+                  Modifier
+                </button>
+                <button
+                  type="button"
+                  class="btn btn-secondary danger curriculum-delete"
+                >
+                  Supprimer
+                </button>
+              </div>
+            </div>
+            <div class="curriculum-fields" hidden>
+              <div class="form-grid">
+                <div class="field">
+                  {{ subform.annee.label_tag }} {{ subform.annee }} {{
+                  subform.annee.errors }}
+                </div>
+                <div class="field">
+                  {{ subform.libelle.label_tag }} {{ subform.libelle }} {{
+                  subform.libelle.errors }}
+                </div>
+                <div class="field field-wide">
+                  {{ subform.details.label_tag }} {{ subform.details }} {{
+                  subform.details.errors }}
+                </div>
+              </div>
+              <button type="button" class="btn btn-secondary curriculum-save">
+                Terminer la modification
+              </button>
+            </div>
+          </article>
           {% endfor %}
+          <p class="curriculum-empty" id="curriculum-empty">
+            Aucune expérience enregistrée.
+          </p>
+        </div>
+
+        <template id="curriculum-entry-template">
+          <article class="curriculum-item editing" data-curriculum-item>
+            {{ formset.empty_form.id }} {{ formset.empty_form.ordre }}
+            <input
+              type="hidden"
+              name="{{ formset.empty_form.prefix }}-DELETE"
+              id="id_{{ formset.empty_form.prefix }}-DELETE"
+              value=""
+            />
+            <div class="curriculum-summary" hidden>
+              <span class="curriculum-year" data-year></span>
+              <h3 data-title></h3>
+              <p data-details></p>
+              <div class="curriculum-actions">
+                <button type="button" class="btn btn-secondary curriculum-edit">
+                  Modifier
+                </button>
+                <button
+                  type="button"
+                  class="btn btn-secondary danger curriculum-delete"
+                >
+                  Supprimer
+                </button>
+              </div>
+            </div>
+            <div class="curriculum-fields">
+              <div class="form-grid">
+                <div class="field">
+                  {{ formset.empty_form.annee.label_tag }} {{
+                  formset.empty_form.annee }}
+                </div>
+                <div class="field">
+                  {{ formset.empty_form.libelle.label_tag }} {{
+                  formset.empty_form.libelle }}
+                </div>
+                <div class="field field-wide">
+                  {{ formset.empty_form.details.label_tag }} {{
+                  formset.empty_form.details }}
+                </div>
+              </div>
+              <button type="button" class="btn btn-secondary curriculum-save">
+                Terminer la modification
+              </button>
+            </div>
+          </article>
+        </template>
+
+        <button
+          type="button"
+          class="btn btn-secondary curriculum-add-toggle"
+          id="curriculum-add-toggle"
+        >
+          <i class="bi bi-plus-lg" aria-hidden="true"></i> Ajouter une
+          expérience ministérielle
+        </button>
+        <div class="curriculum-add-panel" id="curriculum-add-panel" hidden>
+          <h3>Nouvelle expérience ministérielle</h3>
+          <div class="form-grid">
+            <div class="field">
+              <label for="curriculum-add-year">Année</label>
+              <input
+                id="curriculum-add-year"
+                type="number"
+                min="1900"
+                max="2100"
+                required
+              />
+            </div>
+            <div class="field">
+              <label for="curriculum-add-title"
+                >Ministère / responsabilité</label
+              >
+              <input id="curriculum-add-title" type="text" required />
+            </div>
+            <div class="field field-wide">
+              <label for="curriculum-add-details">Détails</label>
+              <textarea id="curriculum-add-details" rows="2"></textarea>
+            </div>
+          </div>
+          <div class="curriculum-add-actions">
+            <button
+              type="button"
+              class="btn btn-primary"
+              id="curriculum-add-confirm"
+            >
+              Ajouter
+            </button>
+            <button
+              type="button"
+              class="btn btn-secondary"
+              id="curriculum-add-cancel"
+            >
+              Annuler
+            </button>
+          </div>
         </div>
       </div>
     </div>
 
     <div class="step-panel" data-step="3">
       <div class="form-section compact-section">
-        <h2>Ministère et parcours</h2>
+        <h2>Études faites</h2>
         <div class="form-grid">
-          {% for field in form %} {% if field.name in 'baptise_eau_date baptise_eau_par saint_sceau_date saint_sceau_par communaute_origine date_ordination ministere ordination_par champ_apostolique' %}
           <div class="field">
-            {{ field.label_tag }} {{ field }} {% if field.errors %}
-            <div class="errorlist">{{ field.errors }}</div>
-            {% endif %}
+            <label for="id_niveau_etudes">Niveau d’études</label>
+            {{ form.niveau_etudes }} {{ form.niveau_etudes.errors }}
           </div>
-          {% endif %} 
-          {% endfor %}
-        </div>
-
-        <div class="inline-section">
-          {{ formset.management_form }} {% for subform in formset %}
-          <div class="inline-formset">{{ subform.as_p }}</div>
-          {% endfor %}
+          <div class="field">
+            <label for="id_domaine_etudes">Domaine d’études</label>
+            {{ form.domaine_etudes }} {{ form.domaine_etudes.errors }}
+          </div>
         </div>
       </div>
     </div>
 
     <div class="step-panel" data-step="4">
       <div class="form-section compact-section">
-        <h2>Études et photo</h2>
+        <h2>Disponibilité à l'œuvre</h2>
         <div class="form-grid">
-          {% for field in form %} {% if field.name in 'photo niveau_etudes domaine_etudes' %}
           <div class="field">
-            {{ field.label_tag }} {{ field }} 
-            {% if field.errors %}
-            <div class="errorlist">{{ field.errors }}</div>
-            {% endif %}
+            {{ form.disponibilite.label_tag }} {{ form.disponibilite }} {{
+            form.disponibilite.errors }}
           </div>
-          {% endif %} 
-          {% endfor %}
-        </div>
-      </div>
-    </div>
-
-    <div class="step-panel" data-step="5">
-      <div class="form-section compact-section">
-        <h2>Disponibilité</h2>
-        <div class="form-grid">
-          {% for field in form %} {% if field.name in 'disponibilite lieu_remplissage date_remplissage signature' %}
           <div class="field">
-            {{ field.label_tag }} {{ field }} {% if field.errors %}
-            <div class="errorlist">{{ field.errors }}</div>
-            {% endif %}
+            <label for="id_lieu_remplissage">Lieu de remplissage</label>
+            {{ form.lieu_remplissage }} {{ form.lieu_remplissage.errors }}
           </div>
-          {% endif %} 
-          {% endfor %}
+          <div class="field">
+            <label for="id_date_remplissage">Date</label>
+            {{ form.date_remplissage }} {{ form.date_remplissage.errors }}
+          </div>
+          <div class="field">
+            <label for="id_signature">Signature</label>
+            {{ form.signature }} {{ form.signature.errors }}
+          </div>
         </div>
 
         <div id="availability-message" class="availability-message hidden">
@@ -144,12 +378,15 @@
       </div>
     </div>
 
-    <div class="step-panel" data-step="6">
+    <div class="step-panel" data-step="5">
       <div class="review-card">
-        <h2>Récapitulatif final</h2>
+        <h2>Vérification finale</h2>
         <div class="review-grid">
           <div class="review-item">
             <span>Nom</span><strong data-review="nom">-</strong>
+          </div>
+          <div class="review-item">
+            <span>Post-nom</span><strong data-review="post_nom">-</strong>
           </div>
           <div class="review-item">
             <span>Prénom</span><strong data-review="prenom">-</strong>
@@ -170,10 +407,6 @@
           <div class="review-item">
             <span>Disponibilité</span
             ><strong data-review="disponibilite">-</strong>
-          </div>
-          <div class="review-item">
-            <span>Lieu de remplissage</span
-            ><strong data-review="lieu_remplissage">-</strong>
           </div>
         </div>
         <p class="review-note">
@@ -213,5 +446,5 @@
   </form>
 </div>
 {% endblock %} {% block extra_js %}
-<script src="{% static 'serviteurs/js/wizard.js' %}"></script>
+<script src="{% static 'serviteurs/js/wizard.js' %}?v=20261003-2"></script>
 {% endblock %}
